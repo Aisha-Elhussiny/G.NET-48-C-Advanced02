@@ -70,6 +70,54 @@
             // This lambda checks two conditions: Clothing category and price under 100.
 
             #endregion
+
+            #region Task 03
+            Console.WriteLine("\n--- Short Report ---");
+
+            PrintReport(catalog, p => Console.WriteLine($"{p.Name} - ${p.Price}"));
+
+            // This Action prints a short report with product name and price.
+            Console.WriteLine("\n--- Detailed Report ---");
+
+            PrintReport(catalog, p => Console.WriteLine(  $"[{p.Category}] {p.Name} | Price: ${p.Price} | Stock: {p.Stock}"  ));
+
+            // We use the same PrintReport method but change the lambda to print more details.
+
+            Console.WriteLine("\n--- Summary List ---");
+
+            List<string> summary =  TransformProducts(catalog, p => $"{p.Name} (${p.Price})");
+            // This lambda transforms each Product into a simple text summary.
+
+            foreach (string item in summary)
+            {
+                Console.WriteLine(item);
+            }
+
+
+            Console.WriteLine("\n--- Price Labels ---");
+
+            List<string> labels =
+                TransformProducts(catalog,
+                p => p.Price > 100 ? $"{p.Name}: Expensive!" : $"{p.Name}: Affordable");
+
+            foreach (string item in labels)
+            {
+                Console.WriteLine(item);
+            }
+            // This lambda gives each product a price label depending on its price.
+
+            Console.WriteLine("\n--- Low-Stock Alert ---");
+
+            List<Product> lowStock = FilterProducts(catalog, p => p.Stock < 20);
+
+            foreach (Product p in lowStock)
+            {
+                Console.WriteLine($"[LOW STOCK] {p.Name}: only {p.Stock} left!");
+            }
+
+            // This Predicate finds products with stock less than 20.
+            
+            #endregion
         }
 
 
@@ -89,5 +137,44 @@
             return result;
         }
         // Func<Product, bool> is used because it takes a Product and returns true or false.
+
+        static void PrintReport(List<Product> products, Action<Product> action)
+        {
+            foreach (Product product in products)
+            {
+                action(product);
+            }
+        }
+        // Action<Product> is used because it takes a Product and performs an action without returning a value.
+
+        static List<string> TransformProducts(List<Product> products, Func<Product, string> transform)
+        {
+            List<string> result = new List<string>();
+
+            foreach (Product product in products)
+            {
+                result.Add(transform(product));
+            }
+
+            return result;
+        }
+        // Func<Product, string> is used because it takes a Product and returns a string.
+
+        static List<Product> FilterProducts(List<Product> products, Predicate<Product> condition)
+        {
+            List<Product> result = new List<Product>();
+
+            foreach (Product product in products)
+            {
+                if (condition(product))
+                {
+                    result.Add(product);
+                }
+            }
+
+            return result;
+        }
+        // Predicate<Product> is used to test a Product condition and return true or false.
+
     }
 }
